@@ -38,8 +38,8 @@ def get_lider_products():
             ("https://www.lider.cl/browse/bebidas-y-licores/cervezas/45297969_64295593?page={}", "Cervezas"),
         ]
 
-        max_pages = 3
-        wait = WebDriverWait(driver, 10)  
+        max_pages = 5
+        wait = WebDriverWait(driver, 5)  
 
         # Configuración de reintentos
         MAX_RETRIES = 3

@@ -38,8 +38,8 @@ def get_sta_isabel_products():
             ("https://www.santaisabel.cl/vinos-cervezas-y-licores/cervezas?page={}", "Cervezas"),
         ]
 
-        max_pages = 3
-        wait = WebDriverWait(driver, 10)  
+        max_pages = 5
+        wait = WebDriverWait(driver, 5)  
 
         # Configuración de reintentos
         MAX_RETRIES = 3
