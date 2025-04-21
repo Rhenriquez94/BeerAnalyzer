@@ -81,6 +81,11 @@ def get_sta_isabel_products():
                                 marca = el.find_element(By.CSS_SELECTOR, 'a.product-card-brand').text.strip() #Marca
                             except NoSuchElementException:
                                 marca = "Marca no disponible"
+
+                            try:
+                                image_url = el.find_element(By.TAG_NAME, "source").get_attribute("srcset")
+                            except:
+                                image_url = ""
                                 
 
                             products.append({
@@ -89,6 +94,7 @@ def get_sta_isabel_products():
                                 "precio": price,
                                 "categoria": categoria,
                                 "supermercado": "Santa Isabel",
+                                "image_url": image_url,
                                 "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             })
 
@@ -124,17 +130,17 @@ def get_sta_isabel_products():
 
 
 # # Ejecutar
-# if __name__ == "__main__":
-#     productos = get_sta_isabel_products()
-#     print(productos)
-#     print(f"Total de productos obtenidos: {len(productos)}")
+if __name__ == "__main__":
+    productos = get_sta_isabel_products()
+    print(productos)
+    print(f"Total de productos obtenidos: {len(productos)}")
 
 
-# # ✅ CONVIERTES LA LISTA A UN DATAFRAME
-# productos_df = pd.DataFrame(productos)
+# ✅ CONVIERTES LA LISTA A UN DATAFRAME
+productos_df = pd.DataFrame(productos)
 
-# # Ahora sí puedes guardarlo como Excel
-# filename = "test.xlsx"
-# productos_df.to_excel(filename, index=False)
+# Ahora sí puedes guardarlo como Excel
+filename = "test.xlsx"
+productos_df.to_excel(filename, index=False)
 
-# print(f"✅ Archivo Excel guardado como: {filename}")
+print(f"✅ Archivo Excel guardado como: {filename}")

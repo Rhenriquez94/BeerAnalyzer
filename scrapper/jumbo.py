@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from datetime import datetime
+import pandas as pd
 
 def get_jumbo_products():
     try:
@@ -71,12 +72,24 @@ def get_jumbo_products():
                         except:
                             price = "No disponible"
 
+                        try:
+                            image_url = el.find_element(By.TAG_NAME, "source").get_attribute("srcset")
+                        except:
+                            image_url = ""
+
+                        try:
+                            url = el.find_element(By.TAG_NAME, "a").get_attribute("href")
+                        except:
+                            url = ""
+
                         products.append({
                             "producto": name,
                             "marca": brand,
                             "precio": price,
                             "categoria": categoria,   
                             "supermercado": "Jumbo",
+                            "image_url": image_url,
+                            "url": url,
                             "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         })
 
@@ -96,3 +109,4 @@ def get_jumbo_products():
         if 'driver' in locals():
             driver.quit()
         return []
+

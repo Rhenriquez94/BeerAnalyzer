@@ -84,7 +84,21 @@ def get_lider_products():
                                 marca = el.find_element(By.CSS_SELECTOR, 'div.mb1.mt2.b.f6.black.mr1.lh-copy').text.strip()
                             except NoSuchElementException:
                                 marca = "Marca no disponible"
-                                
+
+                            try:
+                                image_url = el.find_element(By.TAG_NAME, "img").get_attribute("srcset")
+                            except:
+                                image_url = ""    
+
+                            try:
+                                link_element = el.find_element(By.CSS_SELECTOR, 'a[href]')
+                                href = link_element.get_attribute("href")
+                                if href.startswith("/"):
+                                    link = "https://www.lider.cl" + href
+                                else:
+                                    link = href
+                            except:
+                                link = "No disponible"
 
                             products.append({
                                 "producto": name,
@@ -92,6 +106,8 @@ def get_lider_products():
                                 "precio": price,
                                 "categoria": categoria,
                                 "supermercado": "Lider",
+                                "image_url": image_url,
+                                "link":link,
                                 "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             })
 
@@ -126,18 +142,16 @@ def get_lider_products():
     
 
 
-# # Ejecutar
-# if __name__ == "__main__":
-#     productos = get_lider_products()
-#     print(productos)
-#     print(f"Total de productos obtenidos: {len(productos)}")
+if __name__ == "__main__":
+    productos = get_lider_products()
+    print(f"Total de productos obtenidos: {len(productos)}")
 
 
-# # ✅ CONVIERTES LA LISTA A UN DATAFRAME
-# productos_df = pd.DataFrame(productos)
+#  CONVIERTES LA LISTA A UN DATAFRAME
+productos_df = pd.DataFrame(productos)
 
-# # Ahora sí puedes guardarlo como Excel
-# filename = "lider.xlsx"
-# productos_df.to_excel(filename, index=False)
+# Guardarlo como Excel
+filename = "test.xlsx"
+productos_df.to_excel(filename, index=False)
 
-# print(f"✅ Archivo Excel guardado como: {filename}")
+print(f" Archivo Excel guardado como: {filename}")
