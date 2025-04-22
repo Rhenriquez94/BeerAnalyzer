@@ -47,12 +47,12 @@ def get_jumbo_products():
                 try:
                     driver.get(base_url.format(page))
                     
-                    wait.until(EC.presence_of_element_located((By.CLASS_NAME, "product-card-wrap")))
+                    wait.until(EC.presence_of_element_located((By.CLASS_NAME, "product-card")))
                     
                     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                     time.sleep(2)
 
-                    elements = driver.find_elements(By.CLASS_NAME, "product-card-wrap")
+                    elements = driver.find_elements(By.CLASS_NAME, "product-card")
                     if not elements:
                         break
 
@@ -78,7 +78,7 @@ def get_jumbo_products():
                             image_url = ""
 
                         try:
-                            link = el.find_element(By.TAG_NAME, "a").get_attribute("href")
+                            link = el.find_element(By.XPATH, ".//ancestor::a").get_attribute("href")
                         except:
                             link = ""
 
@@ -110,12 +110,3 @@ def get_jumbo_products():
             driver.quit()
         return []
 
-if __name__ == "__main__":
-    productos = get_jumbo_products()
-    print(productos)
-    print(f"Total de productos obtenidos: {len(productos)}")
-
-    productos_df = pd.DataFrame(productos)
-    filename = "test.xlsx"
-    productos_df.to_excel(filename, index=False)
-    print(f"✅ Archivo Excel guardado como: {filename}")

@@ -68,33 +68,38 @@ def get_sta_isabel_products():
 
                         for el in elements:
                             try:
-                                name = el.find_element(By.CSS_SELECTOR, 'a.product-card-name').text.strip() # Nombre
-                            except NoSuchElementException:
-                                    name = "Nombre no disponible"
+                                name = el.find_element(By.CLASS_NAME, "product-card-name").text.strip()
+                            except:
+                                name = "No disponible"
 
                             try:
-                                price = el.find_element(By.CSS_SELECTOR, 'span.prices-main-price').text.strip() #Precio
-                            except NoSuchElementException:
-                                price = "Precio no disponible"
+                                brand = el.find_element(By.CLASS_NAME, "product-card-brand").text.strip()
+                            except:
+                                brand = "No disponible"
 
                             try:
-                                marca = el.find_element(By.CSS_SELECTOR, 'a.product-card-brand').text.strip() #Marca
-                            except NoSuchElementException:
-                                marca = "Marca no disponible"
+                                price = el.find_element(By.CLASS_NAME, "area-price-regular span").text.strip()
+                            except:
+                                price = "No disponible"
 
                             try:
                                 image_url = el.find_element(By.TAG_NAME, "source").get_attribute("srcset")
                             except:
                                 image_url = ""
-                                
+
+                            try:
+                                link = el.find_element(By.XPATH, ".//ancestor::a").get_attribute("href")
+                            except:
+                                link = ""
 
                             products.append({
                                 "producto": name,
-                                "marca": marca,  
+                                "marca": brand,  
                                 "precio": price,
                                 "categoria": categoria,
                                 "supermercado": "Santa Isabel",
                                 "image_url": image_url,
+                                "link": link,
                                 "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             })
 
@@ -129,3 +134,12 @@ def get_sta_isabel_products():
     
 
 
+if __name__ == "__main__":
+    productos = get_sta_isabel_products()
+    print(productos)
+    print(f"Total de productos obtenidos: {len(productos)}")
+
+    productos_df = pd.DataFrame(productos)
+    filename = "test.xlsx"
+    productos_df.to_excel(filename, index=False)
+    print(f"✅ Archivo Excel guardado como: {filename}")
