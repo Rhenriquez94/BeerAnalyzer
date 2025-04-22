@@ -78,9 +78,9 @@ def get_jumbo_products():
                             image_url = ""
 
                         try:
-                            url = el.find_element(By.TAG_NAME, "a").get_attribute("href")
+                            link = el.find_element(By.TAG_NAME, "a").get_attribute("href")
                         except:
-                            url = ""
+                            link = ""
 
                         products.append({
                             "producto": name,
@@ -89,7 +89,7 @@ def get_jumbo_products():
                             "categoria": categoria,   
                             "supermercado": "Jumbo",
                             "image_url": image_url,
-                            "url": url,
+                            "link": link,
                             "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         })
 
@@ -110,3 +110,12 @@ def get_jumbo_products():
             driver.quit()
         return []
 
+if __name__ == "__main__":
+    productos = get_jumbo_products()
+    print(productos)
+    print(f"Total de productos obtenidos: {len(productos)}")
+
+    productos_df = pd.DataFrame(productos)
+    filename = "test.xlsx"
+    productos_df.to_excel(filename, index=False)
+    print(f"✅ Archivo Excel guardado como: {filename}")

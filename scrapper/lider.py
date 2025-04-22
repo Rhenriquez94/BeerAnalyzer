@@ -23,7 +23,7 @@ def get_lider_products():
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option("useAutomationExtension", False)
         options.add_argument("--log-level=3")
-        
+
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
 
@@ -33,17 +33,14 @@ def get_lider_products():
 
         products = []
 
-        # Lista de URLs y sus categorías
         base_urls = [
             ("https://www.lider.cl/browse/bebidas-y-licores/cervezas/45297969_64295593?page={}", "Cervezas"),
         ]
 
         max_pages = 5
-        wait = WebDriverWait(driver, 5)  
-
-        # Configuración de reintentos
+        wait = WebDriverWait(driver, 5)
         MAX_RETRIES = 3
-        RETRY_DELAY = 3 
+        RETRY_DELAY = 3
 
         for base_url, categoria in base_urls:
             page = 1
@@ -54,26 +51,28 @@ def get_lider_products():
                 while retries < MAX_RETRIES and not success:
                     try:
                         driver.get(base_url.format(page))
-                        
+
                         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="list-view"]')))
-                        
+
                         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                         time.sleep(10)
 
                         elements = driver.find_elements(By.CSS_SELECTOR, '[data-testid="list-view"]')
 
-                        if not elements:
-                            print(f"No se encontraron productos en página {page} de {categoria}")
-                            break
+                        try:
+                            enlaces = driver.find_elements(By.CSS_SELECTOR, "a.w-100.h-100.z-1.hide-sibling-opacity.absolute")
+                            hrefs = [enlace.get_attribute("href") for enlace in enlaces]
+                        except NoSuchElementException:
+                            hrefs = []
 
-                        for el in elements:
+                        if len(elements) != len(hrefs):
+                            print(f"Desajuste entre productos y enlaces: productos={len(elements)}, enlaces={len(hrefs)}")
+
+                        for i, el in enumerate(elements):
                             try:
-                                name = el.find_element(By.CSS_SELECTOR, 'a span.w_q67L').text.strip()
+                                name = el.find_element(By.CSS_SELECTOR, 'span[data-automation-id="product-title"]').text.strip()
                             except NoSuchElementException:
-                                try:
-                                    name = el.find_element(By.CSS_SELECTOR, 'span[data-automation-id="product-title"]').text.strip()
-                                except NoSuchElementException:
-                                    name = "Nombre no disponible"
+                                name = "Nombre no disponible"
 
                             try:
                                 price = el.find_element(By.CSS_SELECTOR, '[data-automation-id="product-price"] div').text.strip()
@@ -88,26 +87,22 @@ def get_lider_products():
                             try:
                                 image_url = el.find_element(By.TAG_NAME, "img").get_attribute("srcset")
                             except:
-                                image_url = ""    
+                                image_url = ""
 
                             try:
-                                link_element = el.find_element(By.CSS_SELECTOR, 'a[href]')
-                                href = link_element.get_attribute("href")
-                                if href.startswith("/"):
-                                    link = "https://www.lider.cl" + href
-                                else:
-                                    link = href
-                            except:
+                                href = hrefs[i]
+                                link = href if href.startswith("http") else f"https://www.lider.cl{href}"
+                            except IndexError:
                                 link = "No disponible"
 
                             products.append({
                                 "producto": name,
-                                "marca": marca,  
+                                "marca": marca,
                                 "precio": price,
                                 "categoria": categoria,
                                 "supermercado": "Lider",
                                 "image_url": image_url,
-                                "link":link,
+                                "link": link,
                                 "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             })
 
@@ -121,7 +116,7 @@ def get_lider_products():
 
                     except Exception as page_error:
                         print(f"Error inesperado en página {page}: {str(page_error)}")
-                        retries = MAX_RETRIES  # Forzar salida
+                        retries = MAX_RETRIES
                         break
 
                 if not success:
@@ -129,7 +124,6 @@ def get_lider_products():
                     break
 
             print(f"Cerveza de lider extraída con éxito total:{len(products)} ")
-         
 
         driver.quit()
         return products
@@ -139,19 +133,4 @@ def get_lider_products():
         if 'driver' in locals():
             driver.quit()
         return []
-    
 
-
-if __name__ == "__main__":
-    productos = get_lider_products()
-    print(f"Total de productos obtenidos: {len(productos)}")
-
-
-#  CONVIERTES LA LISTA A UN DATAFRAME
-productos_df = pd.DataFrame(productos)
-
-# Guardarlo como Excel
-filename = "test.xlsx"
-productos_df.to_excel(filename, index=False)
-
-print(f" Archivo Excel guardado como: {filename}")

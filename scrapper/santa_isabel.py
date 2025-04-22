@@ -129,18 +129,3 @@ def get_sta_isabel_products():
     
 
 
-# # Ejecutar
-if __name__ == "__main__":
-    productos = get_sta_isabel_products()
-    print(productos)
-    print(f"Total de productos obtenidos: {len(productos)}")
-
-
-# ✅ CONVIERTES LA LISTA A UN DATAFRAME
-productos_df = pd.DataFrame(productos)
-
-# Ahora sí puedes guardarlo como Excel
-filename = "test.xlsx"
-productos_df.to_excel(filename, index=False)
-
-print(f"✅ Archivo Excel guardado como: {filename}")
