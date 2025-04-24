@@ -22,6 +22,8 @@ def get_jumbo_products():
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option("useAutomationExtension", False)
         options.add_argument("--log-level=3")
+        options.add_argument("--remote-debugging-port=0")
+
         
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
@@ -57,6 +59,9 @@ def get_jumbo_products():
                         break
 
                     for el in elements:
+                        driver.execute_script("arguments[0].scrollIntoView();", el)
+                        time.sleep(0.1) 
+
                         try:
                             name = el.find_element(By.CLASS_NAME, "product-card-name").text.strip()
                         except:
@@ -110,3 +115,13 @@ def get_jumbo_products():
             driver.quit()
         return []
 
+
+# if __name__ == "__main__":
+#     productos = get_jumbo_products()
+#     print(productos)
+#     print(f"Total de productos obtenidos: {len(productos)}")
+
+#     productos_df = pd.DataFrame(productos)
+#     filename = "test.xlsx"
+#     productos_df.to_excel(filename, index=False)
+#     print(f"✅ Archivo Excel guardado como: {filename}")

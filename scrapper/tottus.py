@@ -10,7 +10,16 @@ import time
 from datetime import datetime
 import pandas as pd
 
-def get_lider_products():
+# Extraer base de la URL de la imagen
+def extract_image_base(url):
+    if isinstance(url, str) and url.startswith("http"):
+        primer_url = url.split(',')[0].strip()
+        partes = primer_url.split('/')
+        if len(partes) >= 5:
+            return '/'.join(partes[:5]) + '/'
+    return ""
+
+def get_tottus_products():
     try:
         options = Options()
         options.add_argument("--headless")
@@ -36,7 +45,7 @@ def get_lider_products():
         products = []
 
         base_urls = [
-            ("https://www.lider.cl/browse/bebidas-y-licores/cervezas/45297969_64295593?page={}", "Cervezas"),
+            ("https://www.tottus.cl/tottus-cl/lista/CATG27083/Cervezas?page=1", "Cervezas"),
         ]
 
         max_pages = 5
@@ -46,70 +55,82 @@ def get_lider_products():
 
         for base_url, categoria in base_urls:
             page = 1
+            driver.get(base_url)
+
             while page <= max_pages:
                 retries = 0
                 success = False
 
                 while retries < MAX_RETRIES and not success:
                     try:
-                        driver.get(base_url.format(page))
-
-                        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="list-view"]')))
+                        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a.pod-link')))
 
                         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                         time.sleep(5)
 
-                        elements = driver.find_elements(By.CSS_SELECTOR, '[data-testid="list-view"]')
+                        elements = driver.find_elements(By.CSS_SELECTOR, 'a.pod-link')
 
-                        try:
-                            enlaces = driver.find_elements(By.CSS_SELECTOR, "a.w-100.h-100.z-1.hide-sibling-opacity.absolute")
-                            hrefs = [enlace.get_attribute("href") for enlace in enlaces]
-                        except NoSuchElementException:
-                            hrefs = []
+                        if not elements:
+                            print(f"No se encontraron productos en página {page} de {categoria}")
+                            break
 
-                        if len(elements) != len(hrefs):
-                            print(f"Desajuste entre productos y enlaces: productos={len(elements)}, enlaces={len(hrefs)}")
-
-                        for i, el in enumerate(elements):
-                            try:
-                                name = el.find_element(By.CSS_SELECTOR, 'span[data-automation-id="product-title"]').text.strip()
-                            except NoSuchElementException:
-                                name = "Nombre no disponible"
+                        for el in elements:
+                            driver.execute_script("arguments[0].scrollIntoView();", el)
+                            time.sleep(0.5)
 
                             try:
-                                price = el.find_element(By.CSS_SELECTOR, '[data-automation-id="product-price"] div').text.strip()
-                            except NoSuchElementException:
-                                price = "Precio no disponible"
-
-                            try:
-                                marca = el.find_element(By.CSS_SELECTOR, 'div.mb1.mt2.b.f6.black.mr1.lh-copy').text.strip()
-                            except NoSuchElementException:
-                                marca = "Marca no disponible"
-
-                            try:
-                                image_url = el.find_element(By.TAG_NAME, "img").get_attribute("srcset")
+                                name = el.find_element(By.CSS_SELECTOR, 'b.pod-subTitle').text.strip()
                             except:
-                                image_url = ""
+                                name = "No disponible"
 
                             try:
-                                href = hrefs[i]
-                                link = href if href.startswith("http") else f"https://www.lider.cl{href}"
-                            except IndexError:
-                                link = "No disponible"
+                                brand = el.find_element(By.CSS_SELECTOR, 'b.title-rebrand').text.strip()
+                            except:
+                                brand = "No disponible"
+
+                            try:
+                                price = el.find_element(By.TAG_NAME, 'li').get_attribute('data-internet-price')
+                            except:
+                                price = "No disponible"
+
+                            try:
+                                image_url = el.find_element(By.CSS_SELECTOR, 'source').get_attribute('srcset')
+                            except NoSuchElementException:
+                                try:
+                                    image_url = el.find_element(By.CSS_SELECTOR, 'img').get_attribute('src')
+                                except NoSuchElementException:
+                                    image_url = ""
+
+                            image_base_url = extract_image_base(image_url)
+
+                            try:
+                                link = el.get_attribute("href")
+                            except:
+                                link = ""
 
                             products.append({
                                 "producto": name,
-                                "marca": marca,
+                                "marca": brand,
                                 "precio": price,
                                 "categoria": categoria,
-                                "supermercado": "Lider",
-                                "image_url": image_url,
+                                "supermercado": "Tottus",
+                                "image_url": image_base_url,
                                 "link": link,
                                 "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             })
 
                         success = True
                         page += 1
+
+                        #clic en el botón "Siguiente"
+                        try:
+                            next_button = driver.find_element(By.ID, "testId-pagination-bottom-arrow-right")
+                            driver.execute_script("arguments[0].scrollIntoView();", next_button)
+                            time.sleep(1)
+                            next_button.click()
+                        except Exception as e:
+                            print(f"❌ No se pudo hacer clic en siguiente: {e}")
+                            break
 
                     except TimeoutException:
                         retries += 1
@@ -125,14 +146,23 @@ def get_lider_products():
                     print(f"No se pudo procesar la página {page} después de {MAX_RETRIES} intentos.")
                     break
 
-            print(f"Cerveza de lider extraída con éxito total:{len(products)} ")
+            print(f"Cerveza de Tottus extraída con éxito total:{len(products)} ")
 
         driver.quit()
         return products
 
     except Exception as e:
-        print(f"❌ Error general en get_lider_products: {str(e)}")
+        print(f"Error general en get_tottus_products: {str(e)}")
         if 'driver' in locals():
             driver.quit()
         return []
 
+# if __name__ == "__main__":
+#     productos = get_tottus_products()
+#     print(productos)
+#     print(f"Total de productos obtenidos: {len(productos)}")
+
+#     productos_df = pd.DataFrame(productos)
+#     filename = "test.xlsx"
+#     productos_df.to_excel(filename, index=False)
+#     print(f"Archivo Excel guardado como: {filename}")

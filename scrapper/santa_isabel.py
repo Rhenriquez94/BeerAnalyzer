@@ -23,6 +23,8 @@ def get_sta_isabel_products():
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option("useAutomationExtension", False)
         options.add_argument("--log-level=3")
+        options.add_argument("--remote-debugging-port=0")
+
         
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
@@ -58,7 +60,7 @@ def get_sta_isabel_products():
                         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.product-card-wrap')))
                         
                         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                        time.sleep(10)
+                        time.sleep(5)
 
                         elements = driver.find_elements(By.CSS_SELECTOR, 'div.product-card-wrap')
 
@@ -134,12 +136,12 @@ def get_sta_isabel_products():
     
 
 
-if __name__ == "__main__":
-    productos = get_sta_isabel_products()
-    print(productos)
-    print(f"Total de productos obtenidos: {len(productos)}")
+# if __name__ == "__main__":
+#     productos = get_sta_isabel_products()
+#     print(productos)
+#     print(f"Total de productos obtenidos: {len(productos)}")
 
-    productos_df = pd.DataFrame(productos)
-    filename = "test.xlsx"
-    productos_df.to_excel(filename, index=False)
-    print(f"✅ Archivo Excel guardado como: {filename}")
+#     productos_df = pd.DataFrame(productos)
+#     filename = "test.xlsx"
+#     productos_df.to_excel(filename, index=False)
+#     print(f"✅ Archivo Excel guardado como: {filename}")
