@@ -40,7 +40,7 @@ def get_jumbo_products():
         ]
 
         max_pages = 10  # Límite de páginas por categoría
-        wait = WebDriverWait(driver, 5)
+        wait = WebDriverWait(driver, 8)
 
         # Recorremos cada URL y su categoría
         for base_url, categoria in base_urls:
@@ -52,7 +52,7 @@ def get_jumbo_products():
                     wait.until(EC.presence_of_element_located((By.CLASS_NAME, "product-card")))
                     
                     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                    time.sleep(2)
+                    time.sleep(8)
 
                     elements = driver.find_elements(By.CLASS_NAME, "product-card")
                     if not elements:
@@ -60,7 +60,7 @@ def get_jumbo_products():
 
                     for el in elements:
                         driver.execute_script("arguments[0].scrollIntoView();", el)
-                        time.sleep(0.1) 
+                        time.sleep(0.2) 
 
                         try:
                             name = el.find_element(By.CLASS_NAME, "product-card-name").text.strip()
@@ -88,14 +88,14 @@ def get_jumbo_products():
                             link = ""
 
                         products.append({
-                            "producto": name,
-                            "marca": brand,
-                            "precio": price,
-                            "categoria": categoria,   
-                            "supermercado": "Jumbo",
+                            "product_name": name,
+                            "brand": brand,
+                            "price": price,
+                            "category": categoria,   
+                            "market_name": "Jumbo",
                             "image_url": image_url,
                             "link": link,
-                            "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            "query_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         })
 
                     page += 1

@@ -3,7 +3,8 @@ from scrapper.lider import get_lider_products
 from scrapper.santa_isabel import get_sta_isabel_products
 from scrapper.tottus import get_tottus_products
 from pipeline.transform import clean_data
-from pipeline.load import save_to_excel
+from pipeline.load import save_to_csv
+from sql_script.sql_load import cargar_csvs_en_raw
 import time
 
 # Configuración de tiempo de espera
@@ -27,7 +28,7 @@ if __name__ == "__main__":
     
     if productos_fin:
         df = clean_data(productos_fin)
-        save_to_excel(df, "productos_totales")
+        save_to_csv(df, "productos_totales")
         print(f"Archivo creado! Total de productos obtenidos: {len(df)}")
         end_time = time.time()
 
@@ -43,4 +44,4 @@ if __name__ == "__main__":
 
 
 
-
+cargar_csvs_en_raw()

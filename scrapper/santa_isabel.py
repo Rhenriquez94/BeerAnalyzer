@@ -95,14 +95,14 @@ def get_sta_isabel_products():
                                 link = ""
 
                             products.append({
-                                "producto": name,
-                                "marca": brand,  
-                                "precio": price,
-                                "categoria": categoria,
-                                "supermercado": "Santa Isabel",
+                                "product_name": name,
+                                "brand": brand,
+                                "price": price,
+                                "category": categoria,   
+                                "market_name": "Santa Isabel",
                                 "image_url": image_url,
                                 "link": link,
-                                "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                "query_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             })
 
                         success = True

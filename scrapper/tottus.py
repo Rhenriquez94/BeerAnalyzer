@@ -109,14 +109,14 @@ def get_tottus_products():
                                 link = ""
 
                             products.append({
-                                "producto": name,
-                                "marca": brand,
-                                "precio": price,
-                                "categoria": categoria,
-                                "supermercado": "Tottus",
-                                "image_url": image_base_url,
+                                "product_name": name,
+                                "brand": brand,
+                                "price": price,
+                                "category": categoria,   
+                                "market_name": "Tottus",
+                                "image_url": image_url,
                                 "link": link,
-                                "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                "query_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             })
 
                         success = True

@@ -82,9 +82,9 @@ def get_lider_products():
                                 price = "Precio no disponible"
 
                             try:
-                                marca = el.find_element(By.CSS_SELECTOR, 'div.mb1.mt2.b.f6.black.mr1.lh-copy').text.strip()
+                                brand = el.find_element(By.CSS_SELECTOR, 'div.mb1.mt2.b.f6.black.mr1.lh-copy').text.strip()
                             except NoSuchElementException:
-                                marca = "Marca no disponible"
+                                brand = "Marca no disponible"
 
                             try:
                                 image_url = el.find_element(By.TAG_NAME, "img").get_attribute("srcset")
@@ -98,14 +98,14 @@ def get_lider_products():
                                 link = "No disponible"
 
                             products.append({
-                                "producto": name,
-                                "marca": marca,
-                                "precio": price,
-                                "categoria": categoria,
-                                "supermercado": "Lider",
+                                "product_name": name,
+                                "brand": brand,
+                                "price": price,
+                                "category": categoria,   
+                                "market_name": "Lider",
                                 "image_url": image_url,
                                 "link": link,
-                                "fecha_consulta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                "query_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             })
 
                         success = True
