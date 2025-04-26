@@ -122,14 +122,19 @@ def get_tottus_products():
                         success = True
                         page += 1
 
-                        #clic en el botón "Siguiente"
+                            #clic en el botón "Siguiente"
                         try:
-                            next_button = driver.find_element(By.ID, "testId-pagination-bottom-arrow-right")
-                            driver.execute_script("arguments[0].scrollIntoView();", next_button)
-                            time.sleep(1)
-                            next_button.click()
+                            next_button = wait.until(EC.element_to_be_clickable(
+                                (By.CSS_SELECTOR, "button#testId-pagination-bottom-arrow-right")
+                            ))
+                            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", next_button)
+                            time.sleep(1)  # Dar tiempo para acomodar la página
+                            driver.execute_script("arguments[0].click();", next_button)
+                        except TimeoutException:
+                            print(f"🔚 Fin de la paginación en página {page} (botón siguiente no disponible).")
+                            break
                         except Exception as e:
-                            print(f"❌ No se pudo hacer clic en siguiente: {e}")
+                            print(f"❌ No se pudo hacer clic en siguiente en página {page}: {e}")
                             break
 
                     except TimeoutException:

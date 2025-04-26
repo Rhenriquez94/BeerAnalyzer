@@ -1,9 +1,11 @@
 from datetime import datetime
 import os
 
-def save_to_csv(df,supermercado):
-    os.makedirs(f"data/{supermercado}", exist_ok=True)
+
+def save_to_csv(df, carpeta):
+    ruta = f"data/{carpeta}"
+    os.makedirs(ruta, exist_ok=True)  # CREA la carpeta si no existe
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"data/{supermercado}/{supermercado}_{timestamp}.csv"
+    filename = f"{ruta}/{carpeta}_{timestamp}.csv"
     df.to_csv(filename, index=False)
-    print(f"Archivo Excel guardado como: {filename}")
+    print(f"✅ Archivo CSV guardado como: {filename}")

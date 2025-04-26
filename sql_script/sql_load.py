@@ -26,17 +26,31 @@ def cargar_csvs_en_raw():
     ], key=os.path.getmtime)
 
     if not archivos_csv:
-        print("❌ No se encontraron archivos CSV.")
+        print("No se encontraron archivos CSV.")
         return
 
     # Seleccionar el más reciente
     archivo_reciente = archivos_csv[-1]
-    print(f"📥 Cargando archivo más reciente: {archivo_reciente}")
+    print(f" Cargando archivo más reciente: {archivo_reciente}")
 
     # Leer el CSV
     df = pd.read_csv(archivo_reciente)
+    print(df.columns)
+
 
     # Insertar en la tabla raw_products
-    df.to_sql('raw_products', engine, if_exists='append', index=False)
-    print(f"✅ {len(df)} registros insertados en 'raw_products'.")
+    try:
+        df.to_sql(
+            'raw_products',
+            engine,
+            if_exists='append',
+            index=False,
+            method='multi'
+        )
+        print(f"✅ {len(df)} registros insertados en 'raw_products'.")
+    except Exception as e:
+        print(f"❌ Error insertando en 'raw_products': {e}")
+
+
+
 
