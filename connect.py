@@ -19,3 +19,4 @@ def connect():
     url = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}"
     engine = create_engine(url)
     return engine
+

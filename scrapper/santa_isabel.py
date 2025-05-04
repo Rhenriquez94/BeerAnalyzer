@@ -41,7 +41,7 @@ def get_sta_isabel_products():
         ]
 
         max_pages = 5
-        wait = WebDriverWait(driver, 5)  
+        wait = WebDriverWait(driver,10)  
 
         # Configuración de reintentos
         MAX_RETRIES = 3
