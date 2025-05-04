@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from datetime import datetime
-import pandas as pd
+
 
 def get_jumbo_products():
     try:
@@ -40,7 +40,7 @@ def get_jumbo_products():
         ]
 
         max_pages = 10  # Límite de páginas por categoría
-        wait = WebDriverWait(driver, 8)
+        wait = WebDriverWait(driver, 20)
 
         # Recorremos cada URL y su categoría
         for base_url, categoria in base_urls:

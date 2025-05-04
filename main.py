@@ -73,3 +73,7 @@ if __name__ == "__main__":
         print("🎯 ETL completo: scraping + carga + modelado.")
     else:
         print("⚠️ No se encontraron productos. No se ejecutó carga ni modelado.")
+
+save_to_csv(df, "productos_totales", bucket_name="beer-analyzer-data")
+
+

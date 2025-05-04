@@ -40,7 +40,7 @@ def get_lider_products():
         ]
 
         max_pages = 5
-        wait = WebDriverWait(driver, 5)
+        wait = WebDriverWait(driver, 15)
         MAX_RETRIES = 3
         RETRY_DELAY = 3
 
