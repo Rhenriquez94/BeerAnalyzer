@@ -8,6 +8,9 @@ from sql_scripts.sql_load import cargar_csvs_en_raw
 from connect import connect  
 import time
 from sqlalchemy import text
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Función para ejecutar scripts SQL
 def ejecutar_sql_script(path_sql_file, engine):
@@ -56,9 +59,9 @@ if __name__ == "__main__":
         engine = connect()
 
         scripts_etl = [
-            "sql_scripts/step1_update_raw.sql",
-            "sql_scripts/step2_create_dim_products.sql",
-            "sql_scripts/step3_create_fact_prices.sql"
+            os.path.join(BASE_DIR,"sql_scripts/step1_update_raw.sql"),
+            os.path.join(BASE_DIR,"sql_scripts/step2_create_dim_products.sql"),
+            os.path.join(BASE_DIR,"sql_scripts/step3_create_fact_prices.sql"),  
         ]
 
         for script_path in scripts_etl:
